@@ -1,24 +1,49 @@
-import logo from './logo.svg';
-import './App.css';
+import React, { useState } from 'react';
+import SingleColor from './components/SingleColor';
+
+import Values from 'values.js';
 
 function App() {
+  const [color, setColor] = useState('');
+  const [error, setError] = useState(false);
+  const [list, setList] = useState([]);
+
+  const handleSubmit =(e) => {
+    e.preventDefault()
+    try {
+      let colors = new Values(color).all(10)
+      setList(colors)
+    } catch (error) {
+      setError(true)
+    }
+  }
+
   return (
-    <div className="App">
-      <header className="App-header">
-        <img src={logo} className="App-logo" alt="logo" />
-        <p>
-          Edit <code>src/App.js</code> and save to reload.
-        </p>
-        <a
-          className="App-link"
-          href="https://reactjs.org"
-          target="_blank"
-          rel="noopener noreferrer"
-        >
-          Learn React
-        </a>
-      </header>
-    </div>
+    <>
+      <section className="container">
+        <h1 className="title">Mon nuancier</h1>
+
+        <div className="formu">
+          <form onClick={handleSubmit}>
+            <input 
+              type="text" 
+              value={color} 
+              onChange={(e) => setColor(e.target.value)} 
+              placeholder="Entrez une couleur !" 
+              className={`${error?'error' : null}`}
+            />
+            <button className="btn" type="submit">Valider</button>
+          </form>
+        </div>
+      </section>
+      
+      {/*Nuancier*/}
+      <section className="colors">
+        {list.map((color,index) =>{
+          return <SingleColor key={index} {...color} index={index} hexColor={color.hex}/>
+        })}
+      </section>
+    </>   
   );
 }
 
